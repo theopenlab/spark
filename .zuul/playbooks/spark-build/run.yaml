@@ -1,4 +1,5 @@
 - hosts: all
+  become: yes
   tasks:
     - name: Build spark
       shell:
@@ -74,10 +75,10 @@
 
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-          sleep 7200
-          #./build/mvn -DskipTests clean package
+          #sleep 7200
+          ./build/mvn -DskipTests clean package
 
-          #./build/mvn test -fn
+          ./build/mvn test -fn
         chdir: '/home/zuul/src'
         executable: /bin/bash
       environment: '{{ global_env }}'
