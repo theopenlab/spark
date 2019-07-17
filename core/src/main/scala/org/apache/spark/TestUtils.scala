@@ -282,6 +282,10 @@ private[spark] object TestUtils {
       timeout: Long): Unit = {
     val finishTime = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeout)
     while (System.nanoTime() < finishTime) {
+      print("sc.statusTracker.getExecutorInfos: ")
+      println(sc.statusTracker.getExecutorInfos)
+      print("sc.statusTracker.getExecutorInfos.length: ")
+      println(sc.statusTracker.getExecutorInfos.length)
       if (sc.statusTracker.getExecutorInfos.length > numExecutors) {
         return
       }
