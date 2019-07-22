@@ -74,7 +74,7 @@
 
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-          sleep 7200
+          sleep 32400
           whoami
           ./build/mvn -Pyarn -Phive -Phive-thriftserver -DskipTests clean package
           ./build/mvn test -pl :spark-sql_2.12 -pl :spark-hive_2.12 -fn
