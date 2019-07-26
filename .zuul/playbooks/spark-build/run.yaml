@@ -74,6 +74,7 @@
 
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
+          ./build/mvn -DskipTests install
           sleep 32400
           whoami
           ./build/mvn -Pyarn -Phive -Phive-thriftserver -DskipTests clean package
