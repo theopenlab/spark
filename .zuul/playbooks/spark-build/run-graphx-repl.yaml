@@ -76,8 +76,8 @@
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
           #./build/mvn install -fn -DskipTests -pl graph/api,graph/cypher,graph/graph,graphx,repl
           ./build/mvn install -fn -DskipTests
-          ./build/mvn test -fn -DskipTests -pl graph/api,graph/cypher,graph/graph,graphx,repl
-          ./build/mvn verify -fn -DskipTests -pl graph/api,graph/cypher,graph/graph,graphx,repl
+          ./build/mvn test -fn -pl graph/api,graph/cypher,graph/graph,graphx,repl
+          ./build/mvn verify -fn -pl graph/api,graph/cypher,graph/graph,graphx,repl
         chdir: '/home/zuul/src'
         executable: /bin/bash
       environment: '{{ global_env }}'

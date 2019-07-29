@@ -78,10 +78,10 @@
           #assembly,external/kafka-0-10,external/kafka-0-10-sql,external/kafka-0-10-assembly,\
           #external/kafka-0-10-token-provider,external/kafka-0-10-assembly,examples
           ./build/mvn install -fn -DskipTests
-          ./build/mvn test -fn -DskipTests -pl \
+          ./build/mvn test -fn -pl \
           assembly,external/kafka-0-10,external/kafka-0-10-sql,external/kafka-0-10-assembly,\
           external/kafka-0-10-token-provider,external/kafka-0-10-assembly,examples
-          ./build/mvn verify -fn -DskipTests -pl \
+          ./build/mvn verify -fn -pl \
           assembly,external/kafka-0-10,external/kafka-0-10-sql,external/kafka-0-10-assembly,\
           external/kafka-0-10-token-provider,external/kafka-0-10-assembly,examples
         chdir: '/home/zuul/src'

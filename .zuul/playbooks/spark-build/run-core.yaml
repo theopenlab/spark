@@ -78,10 +78,10 @@
           #core,launcher,:spark-parent_2.12,common/tags,common/kvstore,\
           #common/network-common,common/network-shuffle,common/unsafe,common/sketch,external/avro
           ./build/mvn install -fn -DskipTests
-          ./build/mvn test -fn -DskipTests -pl \
+          ./build/mvn test -fn -pl \
           core,launcher,:spark-parent_2.12,common/tags,common/kvstore,\
           common/network-common,common/network-shuffle,common/unsafe,common/sketch,external/avro
-          ./build/mvn verify -fn -DskipTests -pl \
+          ./build/mvn verify -fn -pl \
           core,launcher,:spark-parent_2.12,common/tags,common/kvstore,\
           common/network-common,common/network-shuffle,common/unsafe,common/sketch,external/avro
         chdir: '/home/zuul/src'

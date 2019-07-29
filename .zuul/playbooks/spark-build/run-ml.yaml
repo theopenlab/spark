@@ -76,8 +76,8 @@
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
           #./build/mvn install -fn -DskipTests -pl mllib,mllib-local
           ./build/mvn install -fn -DskipTests
-          ./build/mvn test -fn -DskipTests -pl mllib,mllib-local
-          ./build/mvn verify -fn -DskipTests -pl mllib,mllib-local
+          ./build/mvn test -fn -pl mllib,mllib-local
+          ./build/mvn verify -fn -pl mllib,mllib-local
         chdir: '/home/zuul/src'
         executable: /bin/bash
       environment: '{{ global_env }}'
