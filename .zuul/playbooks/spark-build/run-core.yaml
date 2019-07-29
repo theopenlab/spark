@@ -74,9 +74,10 @@
 
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-          ./build/mvn clean install -fn -DskipTests -pl \
-          core,launcher,:spark-parent_2.12,common/tags,common/kvstore,\
-          common/network-common,common/network-shuffle,common/unsafe,common/sketch,external/avro
+          #./build/mvn clean install -fn -DskipTests -pl \
+          #core,launcher,:spark-parent_2.12,common/tags,common/kvstore,\
+          #common/network-common,common/network-shuffle,common/unsafe,common/sketch,external/avro
+          ./build/mvn install -fn -DskipTests
           ./build/mvn test -fn -DskipTests -pl \
           core,launcher,:spark-parent_2.12,common/tags,common/kvstore,\
           common/network-common,common/network-shuffle,common/unsafe,common/sketch,external/avro
