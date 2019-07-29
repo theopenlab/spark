@@ -335,7 +335,7 @@ class MathFunctionsSuite extends QueryTest with SharedSQLContext {
   }
 
   test("log10") {
-    testOneToOneNonNegativeMathFunction(log10, math.log10)
+    testOneToOneNonNegativeMathFunction(log10, StrictMath.log10)
   }
 
   test("log1p") {
