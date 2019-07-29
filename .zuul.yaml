@@ -1,0 +1,64 @@
+- project:
+    name: theopenlab/spark
+    check:
+      jobs:
+        - spark-build-and-test-arm64-Core
+        - spark-build-and-test-arm64-Sql
+        - spark-build-and-test-arm64-streaming_tools
+        - spark-build-and-test-arm64-ML_launcher
+        - spark-build-and-test-arm64-GraphX_REPL
+        - spark-build-and-test-arm64-Assembly_examples
+
+- job:
+    name: spark-build-and-test-arm64-Core
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-core.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-Sql
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-sql.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-streaming_tools
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-streaming_tools.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-ML
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-ML.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-GraphX_REPL
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-GraphX_REPL.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-Assembly_examples
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-Assembly_examples.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
