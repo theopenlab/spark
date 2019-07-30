@@ -76,7 +76,7 @@
           
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-          ./build/mvn install -fn -DskipTests
+          ./build/mvn clean install -fn -DskipTests
           ./build/sbt test
           #./build/mvn -DskipTests clean package
           #./build/mvn test -Dtest.exclude.tags=org.apache.spark.tags.ExtendedYarnTest,org.apache.spark.tags.ExtendedHiveTest -fn
