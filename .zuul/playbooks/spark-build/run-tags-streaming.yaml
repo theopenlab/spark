@@ -74,10 +74,7 @@
 
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-          #./build/mvn install -fn -DskipTests -pl graph/api,graph/cypher,graph/graph,graphx,repl
-          ./build/mvn install -fn -DskipTests
-          ./build/mvn test -fn -pl graph/api,graph/cypher,graph/graph,graphx,repl
-          ./build/mvn verify -fn -pl graph/api,graph/cypher,graph/graph,graphx,repl
-        chdir: '/home/zuul/src'
+          build/mvn clean package -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn -pl common/tags,common/sketch,graphx,streaming,external/kinesis-asl,external/kinesis-asl-assembly,external/kafka-0-10,external/kafka-0-10-assembly
+          build/mvn test --fail-at-end -Phadoop-2.7 -Pkinesis-asl -fn -pl common/tags,common/sketch,graphx,streaming,external/kinesis-asl,external/kinesis-asl-assembly,external/kafka-0-10,external/kafka-0-10-assembly        chdir: '/home/zuul/src'
         executable: /bin/bash
       environment: '{{ global_env }}'

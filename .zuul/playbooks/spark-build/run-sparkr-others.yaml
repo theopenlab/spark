@@ -74,10 +74,19 @@
 
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-          #./build/mvn install -fn -DskipTests -pl streaming,external/kafka-0-10,external/kafka-0-10-assembly,tools
-          ./build/mvn install -fn -DskipTests
-          ./build/mvn test -fn -pl streaming,external/kafka-0-10,external/kafka-0-10-assembly,tools
-          ./build/mvn verify -fn -pl streaming,external/kafka-0-10,external/kafka-0-10-assembly,tools
+          build/mvn clean package -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn -pl common/tags,sql/catalyst,sql/core,sql/hive,mllib-local,streaming,mllib,resource-managers/yarn,common/network-yarn,resource-managers/mesos,hadoop-cloud,external/spark-ganglia-lgpl
+          build/mvn test --fail-at-end -Dtest.exclude.tags=org.apache.spark.tags.ExtendedYarnTest,org.apache.spark.tags.ExtendedHiveTest -Phadoop-2.7 -Phive -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn -pl common/tags,sql/catalyst,sql/core,sql/hive,mllib-local,streaming,mllib,resource-managers/yarn,common/network-yarn,resource-managers/mesos,hadoop-cloud,external/spark-ganglia-lgpl
+
+          # install R
+          add-apt-repository ppa:marutter/c2d4u
+          apt update -y
+          apt install r-base r-base-dev -y
+
+          apt-get install gdebi-core -y
+          wget https://download1.rstudio.org/rstudio-xenial-1.1.453-amd64.deb
+          gdebi rstudio-xenial-1.1.453-amd64.deb
+          rm rstudio-xenial-1.1.453-amd64.deb
+          R/run-tests.sh
         chdir: '/home/zuul/src'
         executable: /bin/bash
       environment: '{{ global_env }}'

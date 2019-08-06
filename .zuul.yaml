@@ -2,19 +2,18 @@
     name: theopenlab/spark
     check:
       jobs:
-        - spark-build-and-test-arm64-core
+        - spark-build-and-test-arm64-tags-streaming
         - spark-build-and-test-arm64-sql
-        - spark-build-and-test-arm64-streaming-tools
-        - spark-build-and-test-arm64-ml
-        - spark-build-and-test-arm64-graphx-repl
-        - spark-build-and-test-arm64-assembly-examples
+        - spark-build-and-test-arm64-ml-examples
+        - spark-build-and-test-arm64-pyspark
+        - spark-build-and-test-arm64-sparkr-others
 
 - job:
-    name: spark-build-and-test-arm64-core
+    name: spark-build-and-test-arm64-tags-streaming
     parent: init-test
     description: |
       The spark build in openlab cluster.
-    run: .zuul/playbooks/spark-build/run-core.yaml
+    run: .zuul/playbooks/spark-build/run-tags-streaming.yaml
     nodeset: ubuntu-xenial-arm64
     timeout: 86400
 
@@ -28,37 +27,28 @@
     timeout: 86400
 
 - job:
-    name: spark-build-and-test-arm64-streaming-tools
+    name: spark-build-and-test-arm64-ml-examples
     parent: init-test
     description: |
       The spark build in openlab cluster.
-    run: .zuul/playbooks/spark-build/run-streaming-tools.yaml
+    run: .zuul/playbooks/spark-build/run-ml-examples.yaml
     nodeset: ubuntu-xenial-arm64
     timeout: 86400
 
 - job:
-    name: spark-build-and-test-arm64-ml
+    name: spark-build-and-test-arm64-pyspark
     parent: init-test
     description: |
       The spark build in openlab cluster.
-    run: .zuul/playbooks/spark-build/run-ml.yaml
+    run: .zuul/playbooks/spark-build/run-pyspark.yaml
     nodeset: ubuntu-xenial-arm64
     timeout: 86400
 
 - job:
-    name: spark-build-and-test-arm64-graphx-repl
+    name: spark-build-and-test-arm64-sparkr-others
     parent: init-test
     description: |
       The spark build in openlab cluster.
-    run: .zuul/playbooks/spark-build/run-graphx-repl.yaml
-    nodeset: ubuntu-xenial-arm64
-    timeout: 86400
-
-- job:
-    name: spark-build-and-test-arm64-assembly-examples
-    parent: init-test
-    description: |
-      The spark build in openlab cluster.
-    run: .zuul/playbooks/spark-build/run-assembly-examples.yaml
+    run: .zuul/playbooks/spark-build/run-sparkr-others.yaml
     nodeset: ubuntu-xenial-arm64
     timeout: 86400
