@@ -80,9 +80,9 @@
           ./build/mvn clean install -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn -pl common/tags,streaming,external/kinesis-asl,external/kinesis-asl-assembly,sql/catalyst,sql/core,sql/hive,mllib-local,mllib,sql/hive
           # pyspark dependences
           sudo pip install coverage numpy
+          sleep 32000
           #./build/mvn clean install -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn -pl common/tags,streaming,external/kinesis-asl,external/kinesis-asl-assembly,sql/catalyst,sql/core,sql/hive,mllib-local,mllib
           ./python/run-tests-with-coverage --parallelism=4 --modules=pyspark-core,pyspark-sql,pyspark-streaming,pyspark-ml,pyspark-mllib
-          sleep 32000
           # sparkr dependences
           #./build/mvn clean package -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn -pl common/tags,sql/catalyst,sql/core,sql/hive,mllib-local,streaming,mllib
 
