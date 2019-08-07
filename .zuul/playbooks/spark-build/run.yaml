@@ -76,10 +76,9 @@
           
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
-  
-          ./build/mvn -DskipTests -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos clean package
-          ./build/mvn -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos --fail-at-end test
-
+          ./build/mvn clean package -DskipTests -Phadoop-2.7 -Pkubernetes -Phive-thriftserver -Phadoop-cloud -Pkinesis-asl -Pyarn -Pspark-ganglia-lgpl -Phive -Pmesos
+          ./build/mvn clean install -DskipTests -Phadoop-2.7 -Pkubernetes -Phive-thriftserver -Phadoop-cloud -Pkinesis-asl -Pyarn -Pspark-ganglia-lgpl -Phive -Pmesos
+          ./build/mvn test -Dtest.exclude.tags=org.apache.spark.tags.ExtendedYarnTest,org.apache.spark.tags.ExtendedHiveTest -Phadoop-2.7 -Pkubernetes -Phive-thriftserver -Phadoop-cloud -Pkinesis-asl -Pyarn -Pspark-ganglia-lgpl -Phive -Pmesos -fn
         chdir: '/home/zuul/src'
         executable: /bin/bash
       environment: '{{ global_env }}'
