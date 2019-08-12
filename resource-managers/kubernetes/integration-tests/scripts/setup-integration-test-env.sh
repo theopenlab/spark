@@ -65,14 +65,22 @@ then
   # If there is no spark image tag to test with and no src dir, build from current
   SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
   SPARK_INPUT_DIR="$(cd "$SCRIPT_DIR/"../../../../  >/dev/null 2>&1 && pwd )"
-  DOCKER_FILE_BASE_PATH="$SPARK_INPUT_DIR/resource-managers/kubernetes/docker/src/main/dockerfiles/spark"
+  if [[ $(uname -i) == "aarch64" ]]; then
+      DOCKER_FILE_BASE_PATH="$SPARK_INPUT_DIR/resource-managers/kubernetes/docker/src/main/dockerfiles/spark/aarch64"
+  else
+      DOCKER_FILE_BASE_PATH="$SPARK_INPUT_DIR/resource-managers/kubernetes/docker/src/main/dockerfiles/spark"
+  fi
 elif [[ $IMAGE_TAG == "N/A" ]];
 then
   # If there is a test src tarball and no image tag we will want to build from that
   mkdir -p $UNPACKED_SPARK_TGZ
   tar -xzvf $SPARK_TGZ --strip-components=1 -C $UNPACKED_SPARK_TGZ;
   SPARK_INPUT_DIR="$UNPACKED_SPARK_TGZ"
-  DOCKER_FILE_BASE_PATH="$SPARK_INPUT_DIR/kubernetes/dockerfiles/spark"
+  if [[ $(uname -i) == "aarch64" ]]; then
+      DOCKER_FILE_BASE_PATH="$SPARK_INPUT_DIR/kubernetes/dockerfiles/spark/aarch64"
+  else
+      DOCKER_FILE_BASE_PATH="$SPARK_INPUT_DIR/kubernetes/dockerfiles/spark"
+  fi
 fi
 
 
@@ -81,6 +89,8 @@ if [[ $IMAGE_TAG == "N/A" ]];
 then
   IMAGE_TAG=$(uuidgen);
   cd $SPARK_INPUT_DIR
+
+  BASE_IMAGE_BUILD_ARGS="-f $DOCKER_FILE_BASE_PATH/Dockerfile"
 
   # Build PySpark image
   LANGUAGE_BINDING_BUILD_ARGS="-p $DOCKER_FILE_BASE_PATH/bindings/python/Dockerfile"
@@ -95,7 +105,7 @@ then
   case $DEPLOY_MODE in
     cloud)
       # Build images
-      $SPARK_INPUT_DIR/bin/docker-image-tool.sh -r $IMAGE_REPO -t $IMAGE_TAG $LANGUAGE_BINDING_BUILD_ARGS build
+      $SPARK_INPUT_DIR/bin/docker-image-tool.sh -r $IMAGE_REPO -t $IMAGE_TAG $LANGUAGE_BINDING_BUILD_ARGS $BASE_IMAGE_BUILD_ARGS build
 
       # Push images appropriately
       if [[ $IMAGE_REPO == gcr.io* ]] ;
@@ -109,13 +119,13 @@ then
     docker-for-desktop)
        # Only need to build as this will place it in our local Docker repo which is all
        # we need for Docker for Desktop to work so no need to also push
-       $SPARK_INPUT_DIR/bin/docker-image-tool.sh -r $IMAGE_REPO -t $IMAGE_TAG $LANGUAGE_BINDING_BUILD_ARGS build
+       $SPARK_INPUT_DIR/bin/docker-image-tool.sh -r $IMAGE_REPO -t $IMAGE_TAG $LANGUAGE_BINDING_BUILD_ARGS $BASE_IMAGE_BUILD_ARGS build
        ;;
 
     minikube)
        # Only need to build and if we do this with the -m option for minikube we will
        # build the images directly using the minikube Docker daemon so no need to push
-       $SPARK_INPUT_DIR/bin/docker-image-tool.sh -m -r $IMAGE_REPO -t $IMAGE_TAG $LANGUAGE_BINDING_BUILD_ARGS build
+       $SPARK_INPUT_DIR/bin/docker-image-tool.sh -m -r $IMAGE_REPO -t $IMAGE_TAG $LANGUAGE_BINDING_BUILD_ARGS $BASE_IMAGE_BUILD_ARGS build
        ;;
     *)
        echo "Unrecognized deploy mode $DEPLOY_MODE" && exit 1

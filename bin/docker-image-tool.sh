@@ -190,6 +190,7 @@ function build {
   fi
 
   if [ "${RDOCKERFILE}" != "false" ]; then
+    echo $img_ctx_dir
     (cd $(img_ctx_dir sparkr) && docker build $NOCACHEARG "${BINDING_BUILD_ARGS[@]}" \
       -t $(image_ref spark-r) \
       -f "$RDOCKERFILE" .)

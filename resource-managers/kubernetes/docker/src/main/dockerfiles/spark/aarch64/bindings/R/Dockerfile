@@ -23,21 +23,12 @@ WORKDIR /
 # Reset to root to run installation tasks
 USER 0
 
-RUN mkdir ${SPARK_HOME}/python
-# TODO: Investigate running both pip and pip3 via virtualenvs
-RUN apt install -y python python-pip && \
-    apt install -y python3 python3-pip && \
-    apt install -y apt-utils && \
-    # We remove ensurepip since it adds no functionality since pip is
-    # installed on the image and it just takes up 1.6MB on the image
-    rm -r /usr/lib/python*/ensurepip && \
-    #pip install --upgrade pip setuptools && \
-    # You may install with python3 packages by using pip3.6
-    # Removed the .cache to save space
-    rm -rf /root/.cache && rm -rf /var/cache/apt/*
+RUN mkdir ${SPARK_HOME}/R
 
-COPY python/pyspark ${SPARK_HOME}/python/pyspark
-COPY python/lib ${SPARK_HOME}/python/lib
+RUN apk add --no-cache R R-dev
+
+COPY R ${SPARK_HOME}/R
+ENV R_HOME /usr/lib/R
 
 WORKDIR /opt/spark/work-dir
 ENTRYPOINT [ "/opt/entrypoint.sh" ]
