@@ -12,7 +12,5 @@
     run: .zuul/playbooks/spark-k8s-test/run.yaml
     nodeset: ubuntu-xenial-arm64
     timeout: 18000
-    secrets:
-      - dockerhub
     vars:
       k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
