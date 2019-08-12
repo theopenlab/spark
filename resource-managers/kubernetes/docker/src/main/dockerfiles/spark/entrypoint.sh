@@ -94,4 +94,8 @@ case "$1" in
 esac
 
 # Execute the container CMD under tini for better hygiene
-exec /usr/bin/tini -s -- "${CMD[@]}"
+if [[ $(uname -i) == "aarch64" ]]; then
+    exec /sbin/tini -s -- "${CMD[@]}"
+else
+    exec /usr/bin/tini -s -- "${CMD[@]}"
+fi

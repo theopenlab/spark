@@ -1,0 +1,108 @@
+- hosts: all
+  become: yes
+  roles:
+    - install-openjdk
+    - create-single-k8s-cluster-with-kubeadm
+  tasks:
+    - name: Preparing R env
+      shell:
+        cmd: |
+          set -ex
+          apt-get update
+          
+          # compile R 3.6.1
+          mkdir /opt/installR
+          cd /opt/installR
+          wget https://cran.r-project.org/src/base/R-3/R-3.6.1.tar.gz
+          tar -zxvf R-3.6.1.tar.gz
+      
+          # compile zlib for R
+          apt-get install gfortran -y
+          apt-get install build-essential -y
+          apt-get install libreadline-dev -y
+          apt-get install libxt-dev -y
+          wget http://zlib.net/zlib-1.2.11.tar.gz
+          tar xzvf zlib-1.2.11.tar.gz
+          cd zlib-1.2.11
+          ./configure
+          make && make install
+          cd ..
+      
+          # compile xz for R
+          apt install libbz2-dev -y
+          wget http://tukaani.org/xz/xz-5.2.2.tar.gz
+          tar xzvf xz-5.2.2.tar.gz
+          cd xz-5.2.2
+          ./configure
+          make && make install
+          cd ..
+
+          # compile pcre for R
+          wget https://ftp.pcre.org/pub/pcre/pcre-8.41.tar.gz
+          tar -zxvf pcre-8.41.tar.gz
+          cd pcre-8.41
+          ./configure  --prefix=/opt/pcre-8.41 --enable-utf8
+          make -j3 && make install
+          cd ..
+
+          # compile libcurl for R
+          wget https://curl.haxx.se/download/curl-7.50.1.tar.gz
+          tar zxvf curl-7.50.1.tar.gz
+          cd curl-7.50.1/
+          apt-get install openssl* -y
+          apt-get install libcurl4-gnutls-dev -y
+          apt-get install libssl-dev -y
+          ./configure  --prefix=/opt/curl-7.50.1
+          make && make install
+          cd ..
+
+          # slip out the default curl which didn't support https in the VM image
+          export PATH=$PATH:/opt/curl-7.50.1/bin
+          mv /usr/bin/curl /usr/bin/curl_bk
+
+          # Starting R complie
+          cd R-3.6.1
+          apt-get install dbus libpng-dev libjpeg-dev libcairo-dev qpdf -y
+          ./configure --with-cairo --with-x --enable-R-shlib LDFLAGS="-L/opt/pcre-8.41/lib  -L/opt/curl-7.50.1/lib" CPPFLAGS="-I/opt/pcre-8.41/include -I/opt/curl-7.50.1/include"
+          echo "/opt/pcre-8.41/lib" >> /etc/ld.so.conf
+          echo "/opt/curl-7.50.1/lib" >> /etc/ld.so.conf
+          ldconfig
+          make && make install
+
+          # Prepare the SparkR dependencies
+          R -e "install.packages(c('knitr', 'rmarkdown', 'e1071', 'survival'), repos='https://cloud.r-project.org/')"
+          apt install libxml2-dev -y
+          R -e "install.packages(c('xml2', 'rversions', 'roxygen2'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages(c('devtools'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages(c('crayon', 'praise', 'R6'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages('https://cloud.r-project.org/src/contrib/Archive/testthat/testthat_1.0.2.tar.gz', repos=NULL, type='source')"
+          R -e "packageVersion('knitr'); packageVersion('rmarkdown'); packageVersion('testthat'); packageVersion('e1071'); packageVersion('survival'); packageVersion('xml2'); packageVersion('rversions'); packageVersion('roxygen2'); packageVersion('devtools');"
+          
+          cd {{ ansible_user_dir }}/{{ zuul.project.src_dir }}
+          ./R/install-dev.sh
+        chdir: '{{ zuul.project.src_dir }}'
+        executable: /bin/bash
+      environment: '{{ global_env }}'
+    - name: Run integration tests of Spark with k8s cluster manager
+      shell: |
+        set -ex
+    
+        sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
+
+        # Create required account in k8s
+        export KUBECONFIG=/etc/kubernetes/admin.conf
+        kubectl create serviceaccount spark
+        kubectl create clusterrolebinding spark-role --clusterrole=edit --serviceaccount=default:spark --namespace=default
+        # NOTE: the distribution step may fail due to dependencies downloading failure, so we support retry
+        sleep 86400
+        for i in $(seq 1 3); do ./dev/make-distribution.sh --tgz --r -Pkubernetes && s=0 && break || s=$? && sleep 5; done; (exit $s)
+        pushd resource-managers/kubernetes/integration-tests
+        dev/dev-run-integration-tests.sh --deploy-mode cloud \
+            --spark-master k8s://$(kubectl config view -o jsonpath='{.clusters[0].cluster.server}') \
+            --spark-tgz $(realpath ../../../spark-*.tgz) --namespace default --service-account spark \
+            --exclude-tags minikube
+        popd
+      args:
+        executable: /bin/bash
+        chdir: '{{ zuul.project.src_dir }}'
+      environment: '{{ global_env }}'
