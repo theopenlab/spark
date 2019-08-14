@@ -2,15 +2,44 @@
     name: theopenlab/spark
     check:
       jobs:
-        - spark-k8s-test
+        - spark-build-and-test-arm64-core-all
+        - spark-build-and-test-arm64-sql
+        - spark-build-and-test-arm64-ml-examples
+        - spark-build-and-test-arm64-pyspark
+        - spark-build-and-test-arm64-sparkr-others
 
 - job:
-    name: spark-k8s-test
+    name: spark-build-and-test-arm64-core-all
     parent: init-test
     description: |
-      Run integration tests of spark of master against v1.13.3 k8s cluster deployed by v0.34.1 minikube
-    run: .zuul/playbooks/spark-k8s-test/run.yaml
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-core-all.yaml
     nodeset: ubuntu-xenial-arm64
-    timeout: 18000
-    vars:
-      k8s_log_dir: '{{ ansible_user_dir }}/workspace/logs/kubernetes'
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-sql
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-sql.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-pyspark
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-pyspark.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+
+- job:
+    name: spark-build-and-test-arm64-sparkr
+    parent: init-test
+    description: |
+      The spark build in openlab cluster.
+    run: .zuul/playbooks/spark-build/run-sparkr.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
