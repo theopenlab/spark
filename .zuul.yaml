@@ -4,9 +4,8 @@
       jobs:
         - spark-build-and-test-arm64-core-all
         - spark-build-and-test-arm64-sql
-        - spark-build-and-test-arm64-ml-examples
         - spark-build-and-test-arm64-pyspark
-        - spark-build-and-test-arm64-sparkr-others
+        - spark-build-and-test-arm64-sparkr
 
 - job:
     name: spark-build-and-test-arm64-core-all
