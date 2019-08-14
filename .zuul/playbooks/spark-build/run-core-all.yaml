@@ -65,6 +65,7 @@
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
           build/mvn clean package -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn
+          build/mvn clean install -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn
           build/mvn test --fail-at-end -Dtest.exclude.tags=org.apache.spark.tags.ExtendedHiveTest  -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn -pl !sql/core
         chdir: '/home/zuul/src'
         executable: /bin/bash
