@@ -66,10 +66,10 @@
           sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
           build/mvn clean package -DskipTests -Phadoop-2.7 -Phive -Phive-thriftserver -Pkinesis-asl -Pyarn -Pmesos -Pkubernetes -Phadoop-cloud -Pspark-ganglia-lgpl -fn
           # install R
-          add-apt-repository ppa:marutter/c2d4u
-          apt update -y
-          apt install r-base r-base-dev -y
-          apt-get install gdebi-core -y
+          sudo add-apt-repository ppa:marutter/c2d4u -y
+          sudo apt update -y
+          sudo apt install r-base r-base-dev -y
+          sudo apt-get install gdebi-core -y
           R -e "install.packages(c('knitr', 'rmarkdown', 'e1071', 'survival'), repos='https://cloud.r-project.org/')"
           R -e "install.packages(c('crayon', 'praise', 'R6'), repos='https://cloud.r-project.org/')"
           R -e "install.packages('https://cloud.r-project.org/src/contrib/Archive/testthat/testthat_1.0.2.tar.gz', repos=NULL, type='source')"
