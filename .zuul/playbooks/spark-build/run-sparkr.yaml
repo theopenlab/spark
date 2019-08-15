@@ -71,6 +71,8 @@
           sudo apt update -y || true
           sudo apt install r-base r-base-dev -y
           sudo apt-get install gdebi-core -y
+          # TODO, think how to change the priority
+          sudo chmod 777 /usr/local/lib/R/site-library
           R -e "install.packages(c('knitr', 'rmarkdown', 'e1071', 'survival'), repos='https://cloud.r-project.org/')"
           R -e "install.packages(c('crayon', 'praise', 'R6'), repos='https://cloud.r-project.org/')"
           R -e "install.packages('https://cloud.r-project.org/src/contrib/Archive/testthat/testthat_1.0.2.tar.gz', repos=NULL, type='source')"
