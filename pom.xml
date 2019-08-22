@@ -525,7 +525,7 @@
         <version>${commons.httpcore.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.fusesource.leveldbjni</groupId>
+        <groupId>com.github.huangtianhua</groupId>
         <artifactId>leveldbjni-all</artifactId>
         <version>1.8</version>
       </dependency>
