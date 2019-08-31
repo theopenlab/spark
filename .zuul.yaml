@@ -1,0 +1,26 @@
+- project:
+    name: theopenlab/spark
+    check:
+      jobs:
+        - spark-build-and-test-arm64-sql
+        - spark-build-and-test-arm64-other-all
+
+- job:
+    name: spark-build-and-test-arm64-sql
+    parent: init-test
+    description: |
+      The spark build and test sql module in openlab cluster.
+    run: .zuul/playbooks/spark-build/run_sql.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+    override-checkout: 26d03b62e20d053943d03b5c5573dd349e49654c
+    
+- job:
+    name: spark-build-and-test-arm64-other-all
+    parent: init-test
+    description: |
+      The spark build and test other modules in openlab cluster.
+    run: .zuul/playbooks/spark-build/run_others.yaml
+    nodeset: ubuntu-xenial-arm64
+    timeout: 86400
+    override-checkout: 26d03b62e20d053943d03b5c5573dd349e49654c
