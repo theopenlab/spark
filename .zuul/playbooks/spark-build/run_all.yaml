@@ -28,9 +28,10 @@
           cd {{ ansible_user_dir }}/{{ zuul.project.src_dir }}
           wget https://repo1.maven.org/maven2/org/openlabtesting/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar
           mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
-  
+          
           ./build/mvn clean install -DskipTests -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos
-          ./build/mvn test -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos -fn -pl sql/core
+          sleep 29000
+          ./build/mvn test -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos -fn
 
         chdir: '/home/zuul/src'
         executable: /bin/bash
