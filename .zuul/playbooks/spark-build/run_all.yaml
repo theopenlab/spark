@@ -23,15 +23,28 @@
           sudo apt-get install vim -y
 
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
-          sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
+          # sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
 
           cd {{ ansible_user_dir }}/{{ zuul.project.src_dir }}
           wget https://repo1.maven.org/maven2/org/openlabtesting/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar
           mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
           
           ./build/mvn clean install -DskipTests -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos
-          sleep 30000
+          # sleep 30000
           ./build/mvn test -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos -fn
+
+          sudo pip install coverage numpy
+          ./python/run-tests-with-coverage --parallelism=4 --modules=pyspark-core,pyspark-sql,pyspark-streaming,pyspark-ml,pyspark-mllib
+
+          sudo add-apt-repository ppa:marutter/c2d4u -y
+          sudo apt update -y
+          sudo apt install r-base r-base-dev -y
+          sudo apt-get install gdebi-core -y
+          R -e "install.packages(c('knitr', 'rmarkdown', 'e1071', 'survival'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages(c('crayon', 'praise', 'R6'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages('https://cloud.r-project.org/src/contrib/Archive/testthat/testthat_1.0.2.tar.gz', repos=NULL, type='source')"
+          R -e "packageVersion('knitr'); packageVersion('rmarkdown'); packageVersion('testthat'); packageVersion('e1071'); packageVersion('survival')"
+          ./R/run-tests.sh
 
         chdir: '/home/zuul/src'
         executable: /bin/bash
