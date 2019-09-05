@@ -284,13 +284,13 @@ class CliSuite extends SparkFunSuite with BeforeAndAfterAll with Logging {
   }
 
   test("SPARK-21451: spark.sql.warehouse.dir should respect options in --hiveconf") {
-    runCliWithin(3.minutes)("set spark.sql.warehouse.dir;" -> warehousePath.getAbsolutePath)
+    runCliWithin(1.minute)("set spark.sql.warehouse.dir;" -> warehousePath.getAbsolutePath)
   }
 
   test("SPARK-21451: Apply spark.hadoop.* configurations") {
     val tmpDir = Utils.createTempDir(namePrefix = "SPARK-21451")
     runCliWithin(
-      3.minutes,
+      1.minute,
       Seq(s"--conf", s"spark.hadoop.${ConfVars.METASTOREWAREHOUSE}=$tmpDir"))(
       "set spark.sql.warehouse.dir;" -> tmpDir.getAbsolutePath)
     tmpDir.delete()
