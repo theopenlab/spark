@@ -25,6 +25,9 @@
           # fix error: java.net.UnknownHostException: ubuntu: ubuntu: Name or service not known
           # sudo sed -i -e '/127.0.0.1/ s/\(localhost\)/'$(hostname)' \1/' /etc/hosts
 
+          # Test for fit ubuntu Unknow host and test failure
+          sudo sed -i -e 's/^127.0.0.1 .*$/127.0.0.1 localhost '$(hostname)'/g' /etc/hosts
+
           cd {{ ansible_user_dir }}/{{ zuul.project.src_dir }}
           wget https://repo1.maven.org/maven2/org/openlabtesting/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar
           mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
