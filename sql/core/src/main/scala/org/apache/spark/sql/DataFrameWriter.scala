@@ -17,7 +17,7 @@
 
 package org.apache.spark.sql
 
-import java.util.{Locale, Properties, UUID}
+import java.util.{Locale, Properties}
 
 import scala.collection.JavaConverters._
 
@@ -28,7 +28,8 @@ import org.apache.spark.sql.catalyst.TableIdentifier
 import org.apache.spark.sql.catalyst.analysis.{EliminateSubqueryAliases, NoSuchTableException, UnresolvedRelation}
 import org.apache.spark.sql.catalyst.catalog._
 import org.apache.spark.sql.catalyst.expressions.Literal
-import org.apache.spark.sql.catalyst.plans.logical.{AppendData, CreateTableAsSelect, InsertIntoTable, LogicalPlan, OverwriteByExpression, OverwritePartitionsDynamic, ReplaceTableAsSelect}
+import org.apache.spark.sql.catalyst.plans.logical.{AppendData, CreateTableAsSelect, LogicalPlan, OverwriteByExpression, OverwritePartitionsDynamic, ReplaceTableAsSelect}
+import org.apache.spark.sql.catalyst.plans.logical.sql.InsertIntoStatement
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 import org.apache.spark.sql.execution.SQLExecution
 import org.apache.spark.sql.execution.command.DDLUtils
@@ -354,15 +355,14 @@ final class DataFrameWriter[T] private[sql](ds: Dataset[T]) {
 
     val session = df.sparkSession
     val canUseV2 = lookupV2Provider().isDefined
-    val sessionCatalogOpt = session.sessionState.analyzer.sessionCatalog
+    val sessionCatalog = session.sessionState.analyzer.sessionCatalog
 
     session.sessionState.sqlParser.parseMultipartIdentifier(tableName) match {
       case CatalogObjectIdentifier(Some(catalog), ident) =>
         insertInto(catalog, ident)
 
-      case CatalogObjectIdentifier(None, ident)
-          if canUseV2 && sessionCatalogOpt.isDefined && ident.namespace().length <= 1 =>
-        insertInto(sessionCatalogOpt.get, ident)
+      case CatalogObjectIdentifier(None, ident) if canUseV2 && ident.namespace().length <= 1 =>
+        insertInto(sessionCatalog, ident)
 
       case AsTableIdentifier(tableIdentifier) =>
         insertInto(tableIdentifier)
@@ -409,9 +409,9 @@ final class DataFrameWriter[T] private[sql](ds: Dataset[T]) {
 
   private def insertInto(tableIdent: TableIdentifier): Unit = {
     runCommand(df.sparkSession, "insertInto") {
-      InsertIntoTable(
+      InsertIntoStatement(
         table = UnresolvedRelation(tableIdent),
-        partition = Map.empty[String, Option[String]],
+        partitionSpec = Map.empty[String, Option[String]],
         query = df.logicalPlan,
         overwrite = modeForDSV1 == SaveMode.Overwrite,
         ifPartitionNotExists = false)
@@ -488,17 +488,16 @@ final class DataFrameWriter[T] private[sql](ds: Dataset[T]) {
 
     val session = df.sparkSession
     val canUseV2 = lookupV2Provider().isDefined
-    val sessionCatalogOpt = session.sessionState.analyzer.sessionCatalog
+    val sessionCatalog = session.sessionState.analyzer.sessionCatalog
 
     session.sessionState.sqlParser.parseMultipartIdentifier(tableName) match {
       case CatalogObjectIdentifier(Some(catalog), ident) =>
         saveAsTable(catalog.asTableCatalog, ident, modeForDSV2)
 
-      case CatalogObjectIdentifier(None, ident)
-          if canUseV2 && sessionCatalogOpt.isDefined && ident.namespace().length <= 1 =>
+      case CatalogObjectIdentifier(None, ident) if canUseV2 && ident.namespace().length <= 1 =>
         // We pass in the modeForDSV1, as using the V2 session catalog should maintain compatibility
         // for now.
-        saveAsTable(sessionCatalogOpt.get.asTableCatalog, ident, modeForDSV1)
+        saveAsTable(sessionCatalog.asTableCatalog, ident, modeForDSV1)
 
       case AsTableIdentifier(tableIdentifier) =>
         saveAsTable(tableIdentifier)
