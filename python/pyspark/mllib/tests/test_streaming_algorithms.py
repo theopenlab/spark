@@ -33,14 +33,14 @@ from pyspark.streaming import StreamingContext
 class MLLibStreamingTestCase(unittest.TestCase):
     def setUp(self):
         self.sc = SparkContext('local[4]', "MLlib tests")
-        self.ssc = StreamingContext(self.sc, 1.0)
+        self.ssc = StreamingContext(self.sc, 3.0)
 
     def tearDown(self):
         self.ssc.stop(False)
         self.sc.stop()
 
     @staticmethod
-    def _eventually(condition, timeout=30.0, catch_assertions=False):
+    def _eventually(condition, timeout=120.0, catch_assertions=False):
         """
         Wait a given amount of time for a condition to pass, else fail with an error.
         This is a helper utility for streaming ML tests.
@@ -289,7 +289,7 @@ class StreamingLogisticRegressionWithSGDTests(MLLibStreamingTestCase):
             return True
 
         # We want all batches to finish for this test.
-        self._eventually(condition, 60.0, catch_assertions=True)
+        self._eventually(condition, catch_assertions=True)
 
         t_models = array(models)
         diff = t_models[1:] - t_models[:-1]
@@ -364,7 +364,7 @@ class StreamingLogisticRegressionWithSGDTests(MLLibStreamingTestCase):
                 return True
             return "Latest errors: " + ", ".join(map(lambda x: str(x), errors))
 
-        self._eventually(condition, timeout=60.0)
+        self._eventually(condition)
 
 
 class StreamingLinearRegressionWithTests(MLLibStreamingTestCase):
