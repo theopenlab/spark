@@ -29,13 +29,8 @@
           # use leveldbjni arm supporting jar
           wget https://repo1.maven.org/maven2/org/openlabtesting/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar
           mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
-          
-          # install packages needed
-          pip install coverage numpy --user
-          pip3 install coverage numpy --user
+
           sleep 36000
-          # run python tests
-          python/run-tests --python-executables=python2.7,python3.5
 
         chdir: '/home/zuul/src'
         executable: /bin/bash
