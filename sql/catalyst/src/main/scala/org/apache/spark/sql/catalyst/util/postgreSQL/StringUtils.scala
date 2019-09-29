@@ -15,18 +15,19 @@
  * limitations under the License.
  */
 
-package org.apache.spark.sql.hive.test
+package org.apache.spark.sql.catalyst.util.postgreSQL
 
-import java.io.File
+import org.apache.spark.unsafe.types.UTF8String
 
-import org.apache.hadoop.hive.contrib.udaf.example.UDAFExampleMax
-import org.apache.hive.hcatalog.data.JsonSerDe
+object StringUtils {
+  // "true", "yes", "1", "false", "no", "0", and unique prefixes of these strings are accepted.
+  private[this] val trueStrings =
+    Set("true", "tru", "tr", "t", "yes", "ye", "y", "on", "1").map(UTF8String.fromString)
 
-object HiveTestUtils {
+  private[this] val falseStrings =
+    Set("false", "fals", "fal", "fa", "f", "no", "n", "off", "of", "0").map(UTF8String.fromString)
 
-  val getHiveContribJar: File =
-    new File(classOf[UDAFExampleMax].getProtectionDomain.getCodeSource.getLocation.getPath)
+  def isTrueString(s: UTF8String): Boolean = trueStrings.contains(s)
 
-  val getHiveHcatalogCoreJar: File =
-    new File(classOf[JsonSerDe].getProtectionDomain.getCodeSource.getLocation.getPath)
+  def isFalseString(s: UTF8String): Boolean = falseStrings.contains(s)
 }
