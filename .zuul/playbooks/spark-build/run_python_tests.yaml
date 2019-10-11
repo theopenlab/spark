@@ -23,7 +23,7 @@
           sudo sed -i "s|127.0.0.1 $(hostname) localhost|127.0.0.1 localhost $(hostname)|" /etc/hosts
 
           cd {{ ansible_user_dir }}/{{ zuul.project.src_dir }}
-
+          sleep 36000
           ./build/mvn install -DskipTests -Phadoop-2.7 -Pyarn -Phive -Phive-thriftserver -Pkinesis-asl -Pmesos
 
           # use leveldbjni arm supporting jar
