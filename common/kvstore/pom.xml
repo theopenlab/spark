@@ -45,9 +45,8 @@
       <artifactId>guava</artifactId>
     </dependency>
     <dependency>
-      <groupId>${leveldbjni.group}</groupId>
+      <groupId>org.fusesource.leveldbjni</groupId>
       <artifactId>leveldbjni-all</artifactId>
-      <version>1.8</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
