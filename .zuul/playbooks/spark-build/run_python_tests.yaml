@@ -13,7 +13,10 @@
           tar -zxvf R-3.6.1.tar.gz
           
           # compile zlib for R
-          apt-get install gfortran build-essential libreadline-dev libxt-dev -y
+          apt-get install gfortran -y
+          apt-get install build-essential -y
+          apt-get install libreadline-dev -y
+          apt-get install libxt-dev -y
           wget http://zlib.net/zlib-1.2.11.tar.gz
           tar xzvf zlib-1.2.11.tar.gz
           cd zlib-1.2.11
