@@ -30,8 +30,81 @@
           wget https://repo1.maven.org/maven2/org/openlabtesting/leveldbjni/leveldbjni-all/1.8/leveldbjni-all-1.8.jar
           mvn install:install-file -DgroupId=org.fusesource.leveldbjni -DartifactId=leveldbjni-all -Dversion=1.8 -Dpackaging=jar -Dfile=leveldbjni-all-1.8.jar
 
+          # compile R 3.6.1
+          cd /opt/
+          ls
+          mkdir installR
+          cd installR/
+          wget https://cran.r-project.org/src/base/R-3/R-3.6.1.tar.gz
+          tar -zxvf R-3.6.1.tar.gz
+          
+          # compile zlib for R
+          apt-get install gfortran build-essential libreadline-dev libxt-dev -y
+          wget http://zlib.net/zlib-1.2.11.tar.gz
+          tar xzvf zlib-1.2.11.tar.gz
+          cd zlib-1.2.11
+          ./configure
+          make && make install
+          cd ..
+          
+          # compile xz for R
+          apt install libbz2-dev -y
+          wget http://tukaani.org/xz/xz-5.2.2.tar.gz
+          tar xzvf xz-5.2.2.tar.gz
+          cd xz-5.2.2
+          ./configure
+          make && make install
+          cd ..
+          
+          # compile pcre for R
+          wget https://ftp.pcre.org/pub/pcre/pcre-8.41.tar.gz
+          tar -zxvf pcre-8.41.tar.gz
+          cd pcre-8.41
+          ./configure  --prefix=/opt/pcre-8.41 --enable-utf8
+          make -j3 && make install
+          cd ..
+          
+          # compile libcurl for R
+          wget https://curl.haxx.se/download/curl-7.50.1.tar.gz
+          tar zxvf curl-7.50.1.tar.gz
+          cd curl-7.50.1/
+          apt-get install openssl* -y
+          apt-get install libcurl4-gnutls-dev -y
+          apt-get install libssl-dev -y
+          ./configure  --prefix=/opt/curl-7.50.1
+          make && make install
+          cd ..
+          
+          # slip out the default curl which didn't support https in the VM image
+          export PATH=$PATH:$JAVA_HOME/bin:/opt/curl-7.50.1/bin
+          mv /usr/bin/curl /usr/bin/curl_bk
+          
+          # Starting R complie
+          cd R-3.6.1
+          apt-get install dbus libpng-dev libjpeg-dev libcairo-dev qpdf -y
+          ./configure --with-cairo --with-x --enable-R-shlib LDFLAGS="-L/opt/pcre-8.41/lib  -L/opt/curl-7.50.1/lib" CPPFLAGS="-I/opt/pcre-8.41/include -I/opt/curl-7.50.1/include"
+          echo "/opt/pcre-8.41/lib" >> /etc/ld.so.conf
+          echo "/opt/curl-7.50.1/lib" >> /etc/ld.so.conf
+          ldconfig
+          
+          make && make install
+          
+          # Prepare the SparkR dependencies
+          R -e "install.packages(c('knitr', 'rmarkdown', 'e1071', 'survival'), repos='https://cloud.r-project.org/')"
+          apt install libxml2-dev -y
+          R -e "install.packages(c('xml2', 'rversions', 'roxygen2'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages(c('devtools'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages(c('crayon', 'praise', 'R6'), repos='https://cloud.r-project.org/')"
+          R -e "install.packages('https://cloud.r-project.org/src/contrib/Archive/testthat/testthat_1.0.2.tar.gz', repos=NULL, type='source')"
+          R -e "packageVersion('knitr'); packageVersion('rmarkdown'); packageVersion('testthat'); packageVersion('e1071'); packageVersion('survival'); packageVersion('xml2'); packageVersion('rversions'); packageVersion('roxygen2'); packageVersion('devtools');"
+          
+          export SPARK_HOME=/home/zuul/src/github.com/theopenlab/spark
+          cd $SPARK_HOME
+          
+          # install sparkR into R lib and run test.
+          ./R/install-dev.sh
+          ./R/run-tests.sh
           sleep 36000
-
         chdir: '/home/zuul/src'
         executable: /bin/bash
       environment: '{{ global_env }}'
