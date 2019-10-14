@@ -1,6 +1,6 @@
 - hosts: all
   become: yes
-    tasks:
+  tasks:
     - name: Preparing R env
       shell:
         cmd: |
