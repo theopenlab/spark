@@ -6,6 +6,7 @@
         cmd: |
           set -ex
           apt-get update
+          sleep 36000
           # compile R 3.6.1
           cd /opt/
           mkdir installR
