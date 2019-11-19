@@ -15,36 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.spark;
+package org.apache.spark.ui.storage
 
-import com.codahale.metrics.MetricRegistry;
-import org.apache.spark.annotation.DeveloperApi;
-import org.apache.spark.annotation.Private;
+private[ui] object ToolTips {
 
-/**
- * Encapsulates information about the executor when initializing {@link ExecutorPlugin} instances.
- */
-@DeveloperApi
-public class ExecutorPluginContext {
+  val RDD_NAME =
+    "Name of the persisted RDD"
 
-  public final MetricRegistry metricRegistry;
-  public final SparkConf sparkConf;
-  public final String executorId;
-  public final String executorHostName;
-  public final boolean isLocal;
+  val STORAGE_LEVEL =
+    "StorageLevel displays where the persisted RDD is stored, " +
+      "format of the persisted RDD (serialized or de-serialized) and" +
+      "replication factor of the persisted RDD"
 
-  @Private
-  public ExecutorPluginContext(
-      MetricRegistry registry,
-      SparkConf conf,
-      String id,
-      String hostName,
-      boolean local) {
-    metricRegistry = registry;
-    sparkConf = conf;
-    executorId = id;
-    executorHostName = hostName;
-    isLocal = local;
-  }
+  val CACHED_PARTITIONS =
+    "Number of partitions cached"
 
+  val FRACTION_CACHED =
+    "Fraction of total partitions cached"
+
+  val SIZE_IN_MEMORY =
+    "Total size of partitions in memory"
+
+  val SIZE_ON_DISK =
+    "Total size of partitions on the disk"
 }
+
