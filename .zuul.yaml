@@ -1,0 +1,14 @@
+- project:
+    name: theopenlab/spark
+    check:
+      jobs:
+        - spark-build-and-test-x86-leveldbjni
+
+- job:
+    name: spark-build-and-test-x86-leveldbjni
+    parent: init-test
+    description: |
+      The spark build and test other modules in openlab cluster.
+    run: .zuul/playbooks/spark-build/run_all.yaml
+    nodeset: ubuntu-xenial
+    timeout: 86400

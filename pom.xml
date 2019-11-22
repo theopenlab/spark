@@ -240,6 +240,7 @@
     <spark.test.home>${session.executionRootDirectory}</spark.test.home>
 
     <CodeCacheSize>1g</CodeCacheSize>
+    <leveldbjni.group>org.fusesource.leveldbjni</leveldbjni.group>
   </properties>
   <repositories>
     <repository>
@@ -526,7 +527,7 @@
         <version>${commons.httpcore.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.fusesource.leveldbjni</groupId>
+        <groupId>${leveldbjni.group}</groupId>
         <artifactId>leveldbjni-all</artifactId>
         <version>1.8</version>
       </dependency>
@@ -954,6 +955,10 @@
         <scope>${hadoop.deps.scope}</scope>
         <exclusions>
           <exclusion>
+            <groupId>org.fusesource.leveldbjni</groupId>
+            <artifactId>leveldbjni-all</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
           </exclusion>
@@ -1200,6 +1205,10 @@
         <scope>test</scope>
         <exclusions>
           <exclusion>
+            <groupId>org.fusesource.leveldbjni</groupId>
+            <artifactId>leveldbjni-all</artifactId>
+          </exclusion>
+          <exclusion>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
           </exclusion>
@@ -1239,6 +1248,10 @@
         <version>${yarn.version}</version>
         <scope>${hadoop.deps.scope}</scope>
         <exclusions>
+          <exclusion>
+            <groupId>org.fusesource.leveldbjni</groupId>
+            <artifactId>leveldbjni-all</artifactId>
+          </exclusion>
           <exclusion>
             <groupId>asm</groupId>
             <artifactId>asm</artifactId>
@@ -3080,6 +3093,18 @@
     </profile>
     <profile>
       <id>sparkr</id>
+    </profile>
+    <profile>
+      <id>aarch64</id>
+      <properties>
+        <leveldbjni.group>org.openlabtesting.leveldbjni</leveldbjni.group>
+      </properties>
+      <activation>
+        <os>
+          <family>linux</family>
+          <arch>aarch64</arch>
+        </os>
+      </activation>
     </profile>
   </profiles>
 </project>
